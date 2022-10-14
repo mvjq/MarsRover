@@ -35,3 +35,5 @@ out/
 
 ### VS Code ###
 .vscode/
+/data/marsrover.mv.db
+/data/marsrover.trace.db

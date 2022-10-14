@@ -1,7 +1,9 @@
 package com.elo7.marsrover.web.controller.v1;
 
-import com.elo7.marsrover.model.Rover;
 import com.elo7.marsrover.service.MarsRoverService;
+import com.elo7.marsrover.web.controller.v1.request.CommandRequest;
+import com.elo7.marsrover.web.controller.v1.request.RoverRequest;
+import com.elo7.marsrover.web.controller.v1.response.RoverResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,22 +22,29 @@ import java.util.List;
 @RequestMapping("/v1/rover")
 public class RoverController {
 
-    private MarsRoverService marsRoverService;
+    private final MarsRoverService marsRoverService;
+
+    public RoverController(MarsRoverService marsRoverService) {
+        this.marsRoverService = marsRoverService;
+    }
 
     @PostMapping
-    public ResponseEntity<Rover> createRover(@RequestBody Rover rover) {
+    public ResponseEntity<RoverResponse> createRover(@RequestBody RoverRequest request) {
         try {
-            var saved = marsRoverService.saveRover(rover);
+            // eu preciso ter um request o rover e o planeta ele quer posar
+            log.info("Creating and landing the rover {}",request);
+            var saved = marsRoverService.saveRover(request);
             return new ResponseEntity<>(saved, HttpStatus.CREATED);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/{roverId}")
-    public ResponseEntity<Rover> getRover(@PathVariable int roverId) {
+    @GetMapping("/{roverName}")
+    public ResponseEntity<RoverResponse> getRover(@PathVariable String roverName) {
         try {
-            var found = marsRoverService.getRover(roverId);
+            log.info("Getting rover {}", roverName);
+            var found = marsRoverService.getRover(roverName);
             return new ResponseEntity<>(found, HttpStatus.FOUND);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -43,7 +52,7 @@ public class RoverController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Rover>> getAllRover() {
+    public ResponseEntity<List<RoverResponse>> getAllRover() {
         try {
             var founds = marsRoverService.getAllRovers();
             return new ResponseEntity<>(founds, HttpStatus.FOUND);
@@ -52,16 +61,26 @@ public class RoverController {
         }
     }
 
-    @DeleteMapping("/{roverId}")
-    public ResponseEntity<HttpStatus> deleteRover(@PathVariable int roverId) {
+    @DeleteMapping("/{roverName}")
+    public ResponseEntity<RoverResponse> deleteRover(@PathVariable String roverName) {
         try {
-           marsRoverService.deleteRover(roverId);
-           return new ResponseEntity<>(HttpStatus.OK);
+            log.info("Deleting rover {}", roverName);
+           var deleted = marsRoverService.deleteRover(roverName);
+           return new ResponseEntity<>(deleted, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @PostMapping("/move/{roverId}")
-    public void moveRover(@PathVariable MarsRoverRequest request) {}
+    @PostMapping("/move/{roverName}")
+
+    public ResponseEntity<RoverResponse> moveRover(@PathVariable String roverName, @RequestBody  CommandRequest request) {
+        try {
+            var rover = marsRoverService.sendCommandsToRover(roverName, request);
+            return new ResponseEntity<>(rover, HttpStatus.OK);
+        } catch (Exception ex) {
+            log.info("Exception {} happened when trying to move the rover", ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

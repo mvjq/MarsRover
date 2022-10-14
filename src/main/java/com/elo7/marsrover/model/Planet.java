@@ -1,8 +1,9 @@
 package com.elo7.marsrover.model;
 
-import com.elo7.marsrover.web.controller.v1.PlanetResponse;
 import com.elo7.marsrover.web.controller.v1.request.PlanetRequest;
+import com.elo7.marsrover.web.controller.v1.response.PlanetResponse;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.ArrayList;
 
 @Builder
 @Getter
@@ -38,7 +39,7 @@ public class Planet {
     private String planetName;
     @OneToMany(mappedBy = "planet", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonUnwrapped
-    private Set<Rover> roversOnPlanet;
+    private ArrayList<Rover> roversOnPlanet;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "plateau_id")
@@ -47,13 +48,14 @@ public class Planet {
     public static Planet getPlanetFromRequest(PlanetRequest request) throws Exception {
         return Planet.builder()
                 .planetName(request.planetName())
-                .roversOnPlanet(Set.of())
+                .roversOnPlanet(new ArrayList<>())
                 .plateau(
                         new Plateau(
                                 new Point(request.maxX(), request.maxY())))
                 .build();
     }
 
+    @JsonIgnore
     public PlanetResponse getResponse() {
         return new PlanetResponse(this);
     }

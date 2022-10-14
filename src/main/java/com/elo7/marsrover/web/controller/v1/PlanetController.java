@@ -2,6 +2,7 @@ package com.elo7.marsrover.web.controller.v1;
 
 import com.elo7.marsrover.service.MarsRoverService;
 import com.elo7.marsrover.web.controller.v1.request.PlanetRequest;
+import com.elo7.marsrover.web.controller.v1.response.PlanetResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

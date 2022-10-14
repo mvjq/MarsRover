@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -43,7 +42,7 @@ public class Rover {
     @Column(name = "current_direction", nullable = false)
     private Direction currentDirection;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "id", nullable = false)
     @JsonIgnore
     private Planet planet;
@@ -52,12 +51,6 @@ public class Rover {
 
     public Point getCurrentPoint() {
         return this.currentPoint;
-    }
-
-    public int getPointX() { return this.currentPoint.getX(); }
-
-    public int getPointY() {
-        return this.currentPoint.getY();
     }
 
     public void landedOn(Planet planet) {
@@ -72,12 +65,16 @@ public class Rover {
                 .build();
     }
 
+    @JsonIgnore
     public RoverResponse getResponse() {
         return new RoverResponse(this, this.planet.getPlanetName());
     }
 
     public boolean checkForCollisionWithOtherRover(Rover roverLanded) {
-        if (this.getPointX() == roverLanded.getPointX() && this.getPointY() == roverLanded.getPointY()) {
+        var pointLanded = this.currentPoint;
+        var newPointRover = roverLanded.getCurrentPoint();
+
+        if (pointLanded.getX() == newPointRover.getX() && pointLanded.getY() == newPointRover.getY()) {
             log.info("A collision happened between {} and rover {}", this, roverLanded);
             return true;
         }

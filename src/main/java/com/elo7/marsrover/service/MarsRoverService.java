@@ -4,76 +4,115 @@ import com.elo7.marsrover.model.Planet;
 import com.elo7.marsrover.model.Rover;
 import com.elo7.marsrover.repository.PlanetRepository;
 import com.elo7.marsrover.repository.RoverRepository;
+import com.elo7.marsrover.web.controller.v1.PlanetResponse;
+import com.elo7.marsrover.web.controller.v1.request.CommandRequest;
 import com.elo7.marsrover.web.controller.v1.request.PlanetRequest;
 import com.elo7.marsrover.web.controller.v1.request.RoverRequest;
+import com.elo7.marsrover.web.controller.v1.response.RoverResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Slf4j
 @Service
 public class MarsRoverService {
 
-    private PlanetRepository planetRepository;
-    private RoverRepository roverRepository;
+    private final PlanetRepository planetRepository;
+
+    private final RoverRepository roverRepository;
+
+    public MarsRoverService(PlanetRepository planetRepository, RoverRepository roverRepository) {
+        this.planetRepository = planetRepository;
+        this.roverRepository = roverRepository;
+    }
 
     //CRUDS
-    public Planet savePlanet(PlanetRequest request) {
-        var newPlanet = request.planet();
+    @Transactional
+    public PlanetResponse savePlanet(PlanetRequest request) throws Exception {
+        var newPlanet =  Planet.getPlanetFromRequest(request);
         log.info("Saving planet: {}", newPlanet);
-        return planetRepository.saveAndFlush(newPlanet);
+        return planetRepository.saveAndFlush(newPlanet).getResponse();
     }
 
-    public Planet getPlanet(String planetName) throws Exception {
+    public PlanetResponse getPlanet(String planetName) throws Exception {
         var foundPlanet = planetRepository.findPlanetByPlanetName(planetName);
-        return foundPlanet.orElseThrow(
-                () -> new Exception("Planet not found"));
+        log.info("Found Planet: {}", foundPlanet);
+        return foundPlanet
+                .map(Planet::getResponse)
+                .orElseThrow(
+                () -> new EntityNotFoundException("Planet not found"));
     }
 
-    public List<Planet> getAllPlanets() {
-        return planetRepository.findAll();
+    public List<PlanetResponse> getAllPlanets() {
+        return planetRepository.findAll().stream().map(
+                Planet::getResponse)
+                .toList();
     }
 
-    public void deletePlanet(String planetName) {
-        planetRepository.deleteByPlanetName(planetName);
+    public PlanetResponse deletePlanet(String planetName) throws Exception {
+        return planetRepository.findPlanetByPlanetName(planetName)
+                .map( planet -> {
+                    planetRepository.delete(planet);
+                    return planet.getResponse();
+                        }
+                ).orElseThrow(
+                        () -> new EntityNotFoundException("Planet not found ")
+                );
     }
 
-    public Rover saveRover(RoverRequest request) throws Exception {
+    @Transactional
+    public RoverResponse saveRover(RoverRequest request) throws Exception {
         try {
+            //TODO: verificar se esse rover nao ja existe
+            // se existe vamos considerar que ele ta mudando
+            // de planeta
+            // (e ai preciso remover ele do planet que ele esteva)
+            // e pousar ele em outro planeta
             var roverToLand = Rover.getRoverFromRequest(request);
-            var planetToLand = getPlanet(request.planetName());
+            var planetToLand = planetRepository.findPlanetByPlanetName(request.planetName()).get();
             planetToLand.landRover(roverToLand);
-            log.info("Rover {} landed in Planet {}", roverToLand, planetToLand);
-            planetRepository.saveAndFlush(planetToLand);
-            return roverRepository.saveAndFlush(roverToLand);
+            return roverRepository.saveAndFlush(roverToLand).getResponse();
         } catch (Exception err) {
-            log.error("Exception: {} when landing and saving the rover", err);
+            //TODO: implementar proprias exceptions
+            log.error("Exception when landing and saving the rover: " + err);
             throw err;
         }
     }
 
-    public Rover getRover(String roverName) throws Exception {
-        var foundRover = roverRepository.findRoverByRoverName(roverName);
-        return foundRover.orElseThrow(
-                () -> new Exception("Rover not found"));
+    public RoverResponse getRover(String roverName) throws Exception {
+        return roverRepository.findRoverByRoverName(roverName)
+                .map(Rover::getResponse)
+                .orElseThrow(() -> new EntityNotFoundException("Rover not found"));
     }
 
-    public List<Rover> getAllRovers() {
-        return roverRepository.findAll();
+    public List<RoverResponse> getAllRovers() {
+        return roverRepository.findAll()
+                .stream().map(Rover::getResponse)
+                .toList();
     }
 
-    public void deleteRover(String roverName) {
-        roverRepository.deleteByRoverName(roverName);
+    public RoverResponse deleteRover(String roverName) throws Exception {
+        return roverRepository.findRoverByRoverName(roverName)
+                .map( rover -> {
+                    roverRepository.delete(rover);
+                    return rover.getResponse();
+                })
+                .orElseThrow(
+                        () -> new EntityNotFoundException("planet not found")
+                );
     }
 
-    public void sendCommandsToRover() {
-        // get the planet which the rover wants to land
-        // ask the planet the list of rovers in it  with the plateua
-        // send this list of rovers and plateu to the rover
-        // with the commands for him to do the collision and movement logic
-
-
+    public RoverResponse sendCommandsToRover(String roverName, CommandRequest request) throws Exception {
+        try {
+            var foundRover = roverRepository.findRoverByRoverName(roverName).get();
+            foundRover.executeCommands(request);
+            return foundRover.getResponse();
+        } catch (Exception ex) {
+            log.info("Exception found when sending commands to rover: ", ex);
+            throw ex;
+        }
     }
-
 }

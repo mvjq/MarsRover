@@ -1,63 +1,43 @@
 package com.elo7.marsrover.model;
 
 public enum Direction {
+    N,
+    W,
+    E,
+    S;
 
-    NORTH(0,1) {
-        @Override
-        public Direction left() {
-            return WEST;
-        }
+    private Direction left;
+    private Direction right;
 
-        @Override
-        public Direction right() {
-            return EAST;
-        }
-    },
+    private Point movePoint;
 
-    SOUTH(0,-1) {
-        @Override
-        public Direction right() {
-            return WEST;
-        }
+    static {
+        N.left = W;
+        N.right = E;
+        N.movePoint = new Point(0, 1);
 
-        @Override
-        public Direction left() {
-            return EAST;
-        }
-    },
+        W.left = S;
+        W.right = N;
+        W.movePoint = new Point(-1, 0);
 
-    EAST(1,0) {
-        @Override
-        public Direction right() {
-            return SOUTH;
-        }
+        S.left = W;
+        S.right = E;
+        S.movePoint = new Point(0, -1);
 
-        @Override
-        public Direction left() {
-            return NORTH;
-        }
-    },
-
-    WEST(-1,0) {
-        @Override
-        public Direction right() {
-            return NORTH;
-        }
-
-        @Override
-        public Direction left() {
-            return SOUTH;
-        }
-    };
-
-    private int xAxis;
-    private int yAxis;
-
-   Direction(int x, int y) {
-        this.xAxis = x;
-        this.yAxis = y;
+        E.left = N;
+        E.right = S;
+        S.movePoint = new Point(1, 0);
     }
 
-    public abstract Direction right();
-    public abstract Direction left();
+    public Direction getLeft() {
+        return this.left;
+    }
+
+    public Direction getRight() {
+        return this.right;
+    }
+
+    public Point getMovePoint() {
+        return this.movePoint;
+    }
 }

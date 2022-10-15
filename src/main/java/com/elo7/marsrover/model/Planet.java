@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Getter
@@ -39,7 +40,7 @@ public class Planet {
     private String planetName;
     @OneToMany(mappedBy = "planet", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonUnwrapped
-    private ArrayList<Rover> roversOnPlanet;
+    private List<Rover> roversOnPlanet;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "plateau_id")

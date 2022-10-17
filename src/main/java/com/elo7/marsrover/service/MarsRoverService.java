@@ -91,6 +91,7 @@ public class MarsRoverService {
     public RoverResponse deleteRover(String roverName) throws Exception {
         return roverRepository.findRoverByRoverName(roverName)
                 .map( rover -> {
+                    rover.takeOff();
                     roverRepository.delete(rover);
                     return rover.getResponse();
                 })

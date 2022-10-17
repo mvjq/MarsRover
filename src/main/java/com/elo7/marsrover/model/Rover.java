@@ -138,4 +138,10 @@ public class Rover {
                 ", currentPoint=" + currentPoint +
                 '}';
     }
+
+    public void takeOff() {
+        var list = planet.getRoversOnPlanet();
+        list.remove(this);
+        planet = null;
+    }
 }

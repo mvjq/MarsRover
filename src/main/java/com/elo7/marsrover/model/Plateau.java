@@ -1,5 +1,6 @@
 package com.elo7.marsrover.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,12 +13,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+//TODO: refactor to have entity classes and serialization classes
+// so this jackson annotations and logic
+// stay out of the representation of the model/table from the database
 @Slf4j
 @Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "plateau")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Plateau {
 
     @Id

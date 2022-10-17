@@ -4,6 +4,7 @@ import com.elo7.marsrover.web.controller.v1.request.PlanetRequest;
 import com.elo7.marsrover.web.controller.v1.response.PlanetResponse;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "planet")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NamedEntityGraph(name = "planet-rover-graph",
         attributeNodes = @NamedAttributeNode(value = "roversOnPlanet")
 )
@@ -42,7 +44,7 @@ public class Planet {
     @JsonUnwrapped
     private List<Rover> roversOnPlanet;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "plateau_id")
     private Plateau plateau;
 

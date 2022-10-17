@@ -27,4 +27,10 @@ public class StringCommandParser {
         }
         return commandsParsed;
     }
+
+    public enum CommandInstructions {
+        L,
+        R,
+        M
+    }
 }

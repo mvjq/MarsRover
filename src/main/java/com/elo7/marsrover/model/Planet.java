@@ -1,5 +1,6 @@
 package com.elo7.marsrover.model;
 
+import com.elo7.marsrover.utils.NotValidPosition;
 import com.elo7.marsrover.web.controller.v1.request.PlanetRequest;
 import com.elo7.marsrover.web.controller.v1.response.PlanetResponse;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -77,7 +78,7 @@ public class Planet {
         }
     }
 
-    public boolean isValidPointOnPlanet(Point point) throws Exception {
+    public boolean isValidPointOnPlanet(Point point) throws NotValidPosition {
         return plateau.isValidPointOnPlateau(point);
     }
 

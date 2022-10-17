@@ -1,5 +1,6 @@
 package com.elo7.marsrover.model;
 
+import com.elo7.marsrover.utils.NotValidPosition;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
@@ -43,12 +44,12 @@ public class Plateau {
     //TODO: do a refactor on this boolean + throw exception
     // this logic is 'weak' because in some way i'm controlling the flow of the program
     // with the exception
-    public Boolean isValidPointOnPlateau(Point point) throws Exception {
+    public Boolean isValidPointOnPlateau(Point point) throws NotValidPosition {
         if (point.getX() > maxPoint.getX() ||
                 point.getY() > maxPoint.getY() ||
                 point.getX() < -maxPoint.getX() ||
                 point.getY() < -getMaxPoint().getY()) {
-            throw new Exception("The Point {} are not valid for this plateau: " + this);
+            throw new NotValidPosition("The Point {} are not valid for this plateau: " + this);
         }
         return true;
     }

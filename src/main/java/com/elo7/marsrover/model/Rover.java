@@ -2,6 +2,7 @@ package com.elo7.marsrover.model;
 
 import com.elo7.marsrover.command.Command;
 import com.elo7.marsrover.command.StringCommandParser;
+import com.elo7.marsrover.utils.NotValidPosition;
 import com.elo7.marsrover.web.controller.v1.request.CommandRequest;
 import com.elo7.marsrover.web.controller.v1.request.RoverRequest;
 import com.elo7.marsrover.web.controller.v1.response.RoverResponse;
@@ -82,18 +83,18 @@ public class Rover {
         }
     }
 
-    public void move() throws Exception {
+    public void move() throws NotValidPosition {
         log.info("Trying to move rover {}", this);
         var newPoint = currentPoint.moveNewPoint(currentDirection.getMovePoint());
         if (canMoveOnPlanet(newPoint)) {
             log.info("Moving rover to point {}", newPoint);
             currentPoint = newPoint;
         } else {
-            throw new Exception("Cannot move on this point on the plateau because there is another Rover in here");
+            throw new NotValidPosition("Cannot move on this point on the plateau because there is another Rover in here");
         }
     }
 
-    public boolean canMoveOnPlanet(Point point) throws Exception {
+    public boolean canMoveOnPlanet(Point point) throws NotValidPosition {
         if (planet.isValidPointOnPlanet(point)) {
             for (var r : planet.getRoversOnPlanet()) {
                 if (planet.checkIfSamePositionOnPlanet(r.getCurrentPoint(), point)) {

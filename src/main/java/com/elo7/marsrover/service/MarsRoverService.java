@@ -68,7 +68,14 @@ public class MarsRoverService {
         try {
             var roverToLand = Rover.getRoverFromRequest(request);
             var planetToLand = planetRepository.findPlanetByPlanetName(request.planetName()).get();
+            roverToLand = roverRepository.findRoverByRoverName(roverToLand.getRoverName()).map(
+                    rover -> {
+                        rover.takeOff();
+                        return rover;
+                    }
+            ).orElse(roverToLand);
             planetToLand.landRover(roverToLand);
+            log.info("Rover Landed:  {}", roverToLand);
             return roverRepository.saveAndFlush(roverToLand).getResponse();
         } catch (Exception err) {
             log.error("Exception when landing and saving the rover: " + err);

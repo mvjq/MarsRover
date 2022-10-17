@@ -1,6 +1,6 @@
 package com.elo7.marsrover.service;
 
-import com.elo7.marsrover.model.Command;
+import com.elo7.marsrover.command.StringCommandParser;
 import com.elo7.marsrover.model.Direction;
 import com.elo7.marsrover.model.Planet;
 import com.elo7.marsrover.model.Plateau;
@@ -187,7 +187,7 @@ class MarsRoverServiceTests {
     void sendMoveCommandToRoverDirectionNorth_shouldSucceed() throws Exception {
         createAndCheckPlanet("Mars", 10, 10);
         createAndCheckRover("MarsRover", "Mars", Direction.N, 0, 0);
-        var command = new CommandRequest(List.of(Command.M));
+        var command = new CommandRequest(List.of(StringCommandParser.CommandInstructions.M));
         var responseCommand = marsRoverService.sendCommandsToRover("MarsRover", command);
         assertNotNull(responseCommand);
         assertThat(responseCommand.rover().getCurrentPoint().getX()).isZero();
@@ -199,7 +199,7 @@ class MarsRoverServiceTests {
     void sendMoveCommandToRoverDirectionSouth_shouldPositionNegativeY() throws Exception {
         createAndCheckPlanet("Mars", 10, 10);
         createAndCheckRover("MarsRover", "Mars", Direction.S, 0, 0);
-        var command = new CommandRequest(List.of(Command.M));
+        var command = new CommandRequest(List.of(StringCommandParser.CommandInstructions.M));
         var responseCommand = marsRoverService.sendCommandsToRover("MarsRover", command);
         assertThat(responseCommand.rover().getCurrentPoint().getX()).isZero();
         assertThat(responseCommand.rover().getCurrentPoint().getY()).isEqualTo(-1);
@@ -220,7 +220,7 @@ class MarsRoverServiceTests {
     }
 
     private void sendCommandAndAssertPositionIsValid(String roverName, int expected) throws Exception {
-        var command = new CommandRequest(List.of(Command.M));
+        var command = new CommandRequest(List.of(StringCommandParser.CommandInstructions.M));
         var responseCommand = marsRoverService.sendCommandsToRover(roverName, command);
         assertThat(responseCommand.rover().getCurrentPoint().getX()).isEqualTo(expected);
         assertThat(responseCommand.rover().getCurrentPoint().getY()).isZero();
@@ -230,28 +230,28 @@ class MarsRoverServiceTests {
     void shouldMoveNorthCommandToRoverTillOutsideOfPlateau_shouldThrow() throws Exception {
         createAndCheckPlanet("Mars", 2, 2);
         createAndCheckRover("MarsRover #1", "Mars", Direction.N, 0, 0);
-        sendCommandAndThrows(List.of(Command.M, Command.M, Command.M, Command.M, Command.M));
+        sendCommandAndThrows(List.of(StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M));
     }
 
     @Test
     void shouldMoveSouthCommandToRoverTillOutsideOfPlateau_shouldThrow() throws Exception {
         createAndCheckPlanet("Mars", 2, 2);
         createAndCheckRover("MarsRover #1", "Mars", Direction.S, 0, 0);
-        sendCommandAndThrows(List.of(Command.M, Command.M, Command.M, Command.M, Command.M));
+        sendCommandAndThrows(List.of(StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M));
     }
 
     @Test
     void shouldMoveEastCommandToRoverTillOutsideOfPlateayu_shouldThrow() throws Exception {
         createAndCheckPlanet("Mars", 2, 2);
         createAndCheckRover("MarsRover #1", "Mars", Direction.E, 0, 0);
-        sendCommandAndThrows(List.of(Command.M, Command.M, Command.M, Command.M, Command.M));
+        sendCommandAndThrows(List.of(StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M));
     }
 
     @Test
     void shouldMoveWestCommandToRoverTillOutsideOfPlateau_shouldThrow() throws Exception {
         createAndCheckPlanet("Mars", 2, 2);
         createAndCheckRover("MarsRover #1", "Mars", Direction.W, 0, 0);
-        sendCommandAndThrows(List.of(Command.M, Command.M, Command.M, Command.M, Command.M));
+        sendCommandAndThrows(List.of(StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M, StringCommandParser.CommandInstructions.M));
     }
 
 
@@ -259,7 +259,7 @@ class MarsRoverServiceTests {
     void spinRoverOnPosition_shouldSucceed() throws Exception {
         createAndCheckPlanet("Mars", 10, 10);
         createAndCheckRover("MarsRover #1", "Mars", Direction.N, 0, 0);
-        var command = new CommandRequest(List.of(Command.L, Command.L, Command.L, Command.L));
+        var command = new CommandRequest(List.of(StringCommandParser.CommandInstructions.L, StringCommandParser.CommandInstructions.L, StringCommandParser.CommandInstructions.L, StringCommandParser.CommandInstructions.L));
         var response =  marsRoverService.sendCommandsToRover("MarsRover #1", command);
         assertNotNull(response);
     }
@@ -270,7 +270,7 @@ class MarsRoverServiceTests {
         createAndCheckPlanet("Mars", 10, 10);
         createAndCheckRover("MarsRover #1", "Mars", Direction.N, 0, 0);
         createAndCheckRover("MarsRover #2", "Mars", Direction.N, 0, 1);
-        sendCommandAndThrows(List.of(Command.M));
+        sendCommandAndThrows(List.of(StringCommandParser.CommandInstructions.M));
     }
 
     @Test
@@ -278,7 +278,7 @@ class MarsRoverServiceTests {
         createAndCheckPlanet("Mars", 10, 10);
         createAndCheckRover("MarsRover #1", "Mars", Direction.S, 0, 0);
         createAndCheckRover("MarsRover #2", "Mars", Direction.S, 0, -1);
-        sendCommandAndThrows(List.of(Command.M));
+        sendCommandAndThrows(List.of(StringCommandParser.CommandInstructions.M));
     }
 
     @Test
@@ -286,7 +286,7 @@ class MarsRoverServiceTests {
         createAndCheckPlanet("Mars", 10, 10);
         createAndCheckRover("MarsRover #1", "Mars", Direction.E, 0, 0);
         createAndCheckRover("MarsRover #2", "Mars", Direction.E, 1, 0);
-        sendCommandAndThrows(List.of(Command.M));
+        sendCommandAndThrows(List.of(StringCommandParser.CommandInstructions.M));
     }
 
     @Test
@@ -294,10 +294,18 @@ class MarsRoverServiceTests {
         createAndCheckPlanet("Mars", 10, 10);
         createAndCheckRover("MarsRover #1", "Mars", Direction.W, 0, 0);
         createAndCheckRover("MarsRover #2", "Mars", Direction.W, -1, 0);
-        sendCommandAndThrows(List.of(Command.M));
+        sendCommandAndThrows(List.of(StringCommandParser.CommandInstructions.M));
     }
 
-    private void sendCommandAndThrows(List<Command> M) {
+    @Test
+    void moveRoverToAnotherPlanet_shouldSucceed() throws Exception {
+        createAndCheckPlanet("Mars", 10, 10);
+        createAndCheckPlanet("Earth", 10, 10);
+        createAndCheckRover("MarsRover #1", "Mars", Direction.W, 0, 0);
+        createAndCheckRover("MarsRover #1", "Earth", Direction.W, 0, 0);
+    }
+
+    private void sendCommandAndThrows(List<StringCommandParser.CommandInstructions> M) {
         var command = new CommandRequest(M);
         assertThrows(Exception.class, () -> marsRoverService.sendCommandsToRover("MarsRover #1", command));
     }
@@ -367,5 +375,6 @@ class MarsRoverServiceTests {
         assertNotNull(responseRover);
         var getRoveResponse = marsRoverService.getRover(roverName);
         assertNotNull(getRoveResponse);
+        assert(responseRover.planetName()).equals(planetName);
     }
 }

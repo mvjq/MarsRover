@@ -1,5 +1,7 @@
 package com.elo7.marsrover.model;
 
+import com.elo7.marsrover.command.Command;
+import com.elo7.marsrover.command.StringCommandParser;
 import com.elo7.marsrover.web.controller.v1.request.CommandRequest;
 import com.elo7.marsrover.web.controller.v1.request.RoverRequest;
 import com.elo7.marsrover.web.controller.v1.response.RoverResponse;
@@ -85,20 +87,12 @@ public class Rover {
         return false;
     }
 
-
+    //TODO: refactor this to command pattern
     public void executeCommands(CommandRequest request) throws Exception {
-        var commands = request.commands();
-        log.info("Executing commands {} on rover {} on planet {}", commands, this, this.planet.getPlanetName());
-        for (Command command : commands) {
-            switch (command) {
-                case M -> move();
-                case L -> this.currentDirection = this.currentDirection.getLeft();
-                case R -> this.currentDirection = this.currentDirection.getRight();
-                default -> {
-                    log.info("Invalid rover commands {}", command);
-                    throw new Exception("Invalid rover command");
-                }
-            }
+        var commands = StringCommandParser.parseToCommands(request.commandInstructions());
+        for(Command c : commands) {
+            log.info("Executing command {} on rover {}", c, this);
+            c.execute(this);
         }
     }
 
@@ -140,8 +134,17 @@ public class Rover {
     }
 
     public void takeOff() {
+        log.info("Rover {} takes off from Planet {}", this, this.getPlanet().getPlanetName());
         var list = planet.getRoversOnPlanet();
         list.remove(this);
         planet = null;
+    }
+
+    public void turnLeft() {
+        this.currentDirection = this.currentDirection.getLeft();
+    }
+
+    public void turnRight() {
+        this.currentDirection = this.currentDirection.getRight();
     }
 }

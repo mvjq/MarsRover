@@ -28,3 +28,10 @@ Na raiz do projeto:
 
 O swagger contendo informação sobre os endpoints e schema se encontra mapeado na URL: http://localhost:8080/swagger-ui/index.html
 (o projeto deve estar em execução)
+
+### Melhorias Pós Entrega
+
+Criei uma branch chamada `refactoring` que contém as seguintes modificacoes:
+- Utilizei o design pattern 'command' para lidar com comandos do Rover
+- Implementei a logica de mudar de um rover de planeta (feito a partir de um POST no endpoint /v1/rover
+com um rover pre existente no banco de dados e um planeta diferente do cadastrado).

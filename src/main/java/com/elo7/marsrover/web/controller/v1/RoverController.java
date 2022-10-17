@@ -73,7 +73,6 @@ public class RoverController {
     }
 
     @PostMapping("/move/{roverName}")
-
     public ResponseEntity<RoverResponse> moveRover(@PathVariable String roverName, @RequestBody  CommandRequest request) {
         try {
             var rover = marsRoverService.sendCommandsToRover(roverName, request);

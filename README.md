@@ -38,4 +38,3 @@ Criei uma branch chamada `refactoring` que contém as seguintes modificacoes:
   com um rover pre existente no banco de dados e um planeta diferente do cadastrado).
 - Refatoracao dos objetos deixando mais claro as responsabilidade entre eles.
 - Adicionei testes para a camada dos controllers.
-- Adicionei um github action simples para buildar o projeto no push.

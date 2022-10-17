@@ -82,8 +82,6 @@ public class Rover {
         }
     }
 
-    //TODO: (big) refactor this logic to be more clean
-    // and break it in smaller and reusable functions
     public void move() throws Exception {
         log.info("Trying to move rover {}", this);
         var newPoint = currentPoint.moveNewPoint(currentDirection.getMovePoint());

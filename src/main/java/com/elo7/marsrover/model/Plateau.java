@@ -44,13 +44,21 @@ public class Plateau {
     // this logic is 'weak' because in some way i'm controlling the flow of the program
     // with the exception
     public Boolean isValidPointOnPlateau(Point point) throws Exception {
-        if (point.getX() > this.maxPoint.getX() ||
-                point.getY() > this.maxPoint.getY() ||
-                point.getX() < -this.maxPoint.getX() ||
-                point.getY() < -this.getMaxPoint().getY()) {
+        if (point.getX() > maxPoint.getX() ||
+                point.getY() > maxPoint.getY() ||
+                point.getX() < -maxPoint.getX() ||
+                point.getY() < -getMaxPoint().getY()) {
             throw new Exception("The Point {} are not valid for this plateau: " + this);
         }
         return true;
+    }
+
+    public boolean isSamePositionOnPlateau(Point point1, Point point2) {
+        if (point1.getX() == point2.getX() && point1.getY() == point2.getY()) {
+            log.info("A collision happened in position {}", point1);
+            return true;
+        }
+         return false;
     }
 
     @Override

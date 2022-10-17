@@ -21,7 +21,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.util.Objects;
 
 @Builder
 @Getter
@@ -72,22 +71,9 @@ public class Rover {
 
     @JsonIgnore
     public RoverResponse getResponse() {
-        return new RoverResponse(this, this.planet.getPlanetName());
+        return new RoverResponse(this, planet.getPlanetName());
     }
 
-    public boolean checkForCollisionWithNewRover(Rover roverLanded) {
-
-        var pointLanded = this.currentPoint;
-        var newPoint = roverLanded.getCurrentPoint();
-
-        if (!Objects.equals(roverLanded.roverName, this.roverName) &&
-                checkIfSamePositionOnPlateau(pointLanded, newPoint))  {
-            return true;
-        }
-        return false;
-    }
-
-    //TODO: refactor this to command pattern
     public void executeCommands(CommandRequest request) throws Exception {
         var commands = StringCommandParser.parseToCommands(request.commandInstructions());
         for(Command c : commands) {
@@ -100,26 +86,25 @@ public class Rover {
     // and break it in smaller and reusable functions
     public void move() throws Exception {
         log.info("Trying to move rover {}", this);
-        var newPoint = this.currentPoint.moveNewPoint(this.currentDirection.getMovePoint());
-        if (this.planet.isValidPointOnPlanet(newPoint)) {
-            for(var r: this.planet.getRoversOnPlanet()) {
-                if (checkIfSamePositionOnPlateau(r.getCurrentPoint(), newPoint)) {
-                    throw new Exception("Cannot move on this point on the plateau because there is another Rover in here");
+        var newPoint = currentPoint.moveNewPoint(currentDirection.getMovePoint());
+        if (canMoveOnPlanet(newPoint)) {
+            log.info("Moving rover to point {}", newPoint);
+            currentPoint = newPoint;
+        } else {
+            throw new Exception("Cannot move on this point on the plateau because there is another Rover in here");
+        }
+    }
+
+    public boolean canMoveOnPlanet(Point point) throws Exception {
+        if (planet.isValidPointOnPlanet(point)) {
+            for (var r : planet.getRoversOnPlanet()) {
+                if (planet.checkIfSamePositionOnPlanet(r.getCurrentPoint(), point)) {
+                   return false;
                 }
             }
-            log.info("Moving rover to point {}", newPoint);
-            this.currentPoint = newPoint;
         }
+        return true;
     }
-
-    private boolean checkIfSamePositionOnPlateau(Point pointLanded, Point newPointRover) {
-        if (pointLanded.getX() == newPointRover.getX() && pointLanded.getY() == newPointRover.getY()) {
-            log.info("A collision happened in position {}", pointLanded);
-            return true;
-        }
-        return false;
-    }
-
 
     @Override
     public String toString() {
@@ -134,17 +119,17 @@ public class Rover {
     }
 
     public void takeOff() {
-        log.info("Rover {} takes off from Planet {}", this, this.getPlanet().getPlanetName());
+        log.info("Rover {} takes off from Planet {}", this, getPlanet().getPlanetName());
         var list = planet.getRoversOnPlanet();
         list.remove(this);
         planet = null;
     }
 
     public void turnLeft() {
-        this.currentDirection = this.currentDirection.getLeft();
+        currentDirection = currentDirection.getLeft();
     }
 
     public void turnRight() {
-        this.currentDirection = this.currentDirection.getRight();
+        currentDirection = currentDirection.getRight();
     }
 }

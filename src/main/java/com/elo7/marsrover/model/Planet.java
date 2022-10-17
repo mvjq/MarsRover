@@ -68,21 +68,21 @@ public class Planet {
     // with a semantic of Rover.landsOn(Planet) or something like that
     public void landRover(Rover rover) throws Exception {
         log.info("Trying to land rover {} in planet {}", rover, this);
-        if (isValidPointOnPlanet(rover.getCurrentPoint())) {
-            log.info("The Rover position {} is valid for the plateau of planet", rover.getCurrentPoint());
-            for(var r : roversOnPlanet) {
-                if (rover.checkForCollisionWithNewRover(r)) {
-                    throw new Exception("Cannot land in this point on the Plateau because there is another Rover in here");
-                }
-            }
-            rover.landedOn(this);
-            this.roversOnPlanet.add(rover);
+        rover.landedOn(this);
+        if(rover.canMoveOnPlanet(rover.getCurrentPoint())) {
+            roversOnPlanet.add(rover);
             log.info("Rover {} landed in Planet {}", rover, this);
+        } else {
+            throw new Exception("Cannot land in this point on the Plateau because there is another Rover in here");
         }
     }
 
     public boolean isValidPointOnPlanet(Point point) throws Exception {
-        return this.plateau.isValidPointOnPlateau(point);
+        return plateau.isValidPointOnPlateau(point);
+    }
+
+    public boolean checkIfSamePositionOnPlanet(Point pointLanded, Point newPoint) {
+        return getPlateau().isSamePositionOnPlateau(pointLanded, newPoint);
     }
 
     @Override

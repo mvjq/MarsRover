@@ -31,7 +31,6 @@ import java.util.List;
 )
 public class Planet {
 
-
     @Id
     @GeneratedValue
     @Column(name = "planet_id")
@@ -62,6 +61,9 @@ public class Planet {
         return new PlanetResponse(this);
     }
 
+
+    //TODO: refactor this and centralize in one place (Rover is better,
+    // with a semantic of Rover.landsOn(Planet) or something like that
     public void landRover(Rover rover) throws Exception {
         log.info("Trying to land rover {} in planet {}", rover, this);
         if (isValidPointOnPlanet(rover.getCurrentPoint())) {

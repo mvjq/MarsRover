@@ -66,17 +66,11 @@ public class MarsRoverService {
     @Transactional
     public RoverResponse saveRover(RoverRequest request) throws Exception {
         try {
-            //TODO: verificar se esse rover nao ja existe
-            // se existe vamos considerar que ele ta mudando
-            // de planeta
-            // (e ai preciso remover ele do planet que ele esteva)
-            // e pousar ele em outro planeta
             var roverToLand = Rover.getRoverFromRequest(request);
             var planetToLand = planetRepository.findPlanetByPlanetName(request.planetName()).get();
             planetToLand.landRover(roverToLand);
             return roverRepository.saveAndFlush(roverToLand).getResponse();
         } catch (Exception err) {
-            //TODO: implementar proprias exceptions
             log.error("Exception when landing and saving the rover: " + err);
             throw err;
         }

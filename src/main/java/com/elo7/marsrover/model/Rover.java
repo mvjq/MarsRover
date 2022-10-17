@@ -19,6 +19,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.util.Objects;
 
 @Builder
 @Getter
@@ -73,9 +74,12 @@ public class Rover {
     }
 
     public boolean checkForCollisionWithNewRover(Rover roverLanded) {
+
         var pointLanded = this.currentPoint;
         var newPoint = roverLanded.getCurrentPoint();
-        if (checkIfSamePositionOnPlateau(pointLanded, newPoint))  {
+
+        if (!Objects.equals(roverLanded.roverName, this.roverName) &&
+                checkIfSamePositionOnPlateau(pointLanded, newPoint))  {
             return true;
         }
         return false;
@@ -100,7 +104,6 @@ public class Rover {
 
     //TODO: (big) refactor this logic to be more clean
     // and break it in smaller and reusable functions
-
     public void move() throws Exception {
         log.info("Trying to move rover {}", this);
         var newPoint = this.currentPoint.moveNewPoint(this.currentDirection.getMovePoint());

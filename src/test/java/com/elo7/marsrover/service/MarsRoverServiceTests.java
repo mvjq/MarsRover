@@ -226,12 +226,6 @@ class MarsRoverServiceTests {
         assertThat(responseCommand.rover().getCurrentPoint().getY()).isZero();
     }
 
-    /*
-    ALem dos testss acima eh necssario:
-    - cadastrar rover #1 e #2 e enviar comandos para o #1 andar ate colidir com o rover #2
-    - TODO: tirar um rover de um planeta para o outro (POST no createRover)
-     */
-
     @Test
     void shouldMoveNorthCommandToRoverTillOutsideOfPlateau_shouldThrow() throws Exception {
         createAndCheckPlanet("Mars", 2, 2);

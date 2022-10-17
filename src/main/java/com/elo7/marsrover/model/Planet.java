@@ -64,17 +64,14 @@ public class Planet {
         return new PlanetResponse(this);
     }
 
-
-    //TODO: refactor this and centralize in one place (Rover is better,
-    // with a semantic of Rover.landsOn(Planet) or something like that
-    public void landRover(Rover rover) throws Exception {
+    public void landRover(Rover rover) throws NotValidPosition {
         log.info("Trying to land rover {} in planet {}", rover, this);
         rover.landedOn(this);
         if(rover.canMoveOnPlanet(rover.getCurrentPoint())) {
             roversOnPlanet.add(rover);
             log.info("Rover {} landed in Planet {}", rover, this);
         } else {
-            throw new Exception("Cannot land in this point on the Plateau because there is another Rover in here");
+            throw new NotValidPosition("Cannot land in this point on the Plateau because there is another Rover in here");
         }
     }
 
@@ -83,7 +80,7 @@ public class Planet {
     }
 
     public boolean checkIfSamePositionOnPlanet(Point pointLanded, Point newPoint) {
-        return getPlateau().isSamePositionOnPlateau(pointLanded, newPoint);
+        return plateau.isSamePositionOnPlateau(pointLanded, newPoint);
     }
 
     @Override

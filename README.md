@@ -12,7 +12,7 @@ A descrição do problem se encontra neste [link](https://gist.github.com/elo7-d
 - Um probe só consegue navegar num planeta cadastrado/já existente.
 - Existe um sistema de colisões entre as sondas. Uma sonda não pode pousar sob a outra
  ou fazer algum movimento inválido que cause uma colisão.
-- Qualquer operação que cause um colisao ou posicao invalida é tratado como exceção 
+- Qualquer operação que cause um colisao ou posicao invalida no planeta é tratado como exceção 
  e um código de erro é retornado.
 - Para mudar uma sonda de planeta é necessário deletar uma sonda de um planeta e cadastra-la 
  novamente.

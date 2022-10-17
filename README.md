@@ -36,3 +36,5 @@ Criei uma branch chamada `refactoring` que contém as seguintes modificacoes:
 - Utilizei o design pattern 'command' para lidar com comandos do Rover
 - Implementei a logica de mudar de um rover de planeta (feito a partir de um POST no endpoint /v1/rover
   com um rover pre existente no banco de dados e um planeta diferente do cadastrado).
+- Refatoracao dos objetos deixando mais claro as responsabilidade entre eles.
+- Adicionei testes para a camada dos controllers.

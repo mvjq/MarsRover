@@ -35,11 +35,24 @@ public class Plateau {
         this.maxPoint = point;
     }
 
-    public Boolean isValidPointOnPlateau(Point point) {
-        if (point.getX() > this.maxPoint.getX()|| point.getY() > this.maxPoint.getY()) {
-            log.info("The Point {} are not valid for this plateau", this);
-            return false;
+    //TODO: do a refactor on this boolean + throw exception
+    // this logic is 'weak' because in some way i'm controlling the flow of the program
+    // with the exception
+    public Boolean isValidPointOnPlateau(Point point) throws Exception {
+        if (point.getX() > this.maxPoint.getX() ||
+                point.getY() > this.maxPoint.getY() ||
+                point.getX() < -this.maxPoint.getX() ||
+                point.getY() < -this.getMaxPoint().getY()) {
+            throw new Exception("The Point {} are not valid for this plateau: " + this);
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Plateau{" +
+                "id=" + id +
+                ", maxPoint=" + maxPoint +
+                '}';
     }
 }

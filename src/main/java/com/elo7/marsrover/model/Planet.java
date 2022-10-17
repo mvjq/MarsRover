@@ -31,6 +31,7 @@ import java.util.List;
 )
 public class Planet {
 
+
     @Id
     @GeneratedValue
     @Column(name = "planet_id")
@@ -66,18 +67,27 @@ public class Planet {
         if (isValidPointOnPlanet(rover.getCurrentPoint())) {
             log.info("The Rover position {} is valid for the plateau of planet", rover.getCurrentPoint());
             for(var r : roversOnPlanet) {
-                if (rover.checkForCollisionWithOtherRover(r)) {
-                    throw new Exception("Cannot land in this point on the Planet Plateau because there is another Rover in here");
+                if (rover.checkForCollisionWithNewRover(r)) {
+                    throw new Exception("Cannot land in this point on the Plateau because there is another Rover in here");
                 }
             }
-            log.info("Rover {} landed in Planet {}", rover, this);
-
             rover.landedOn(this);
             this.roversOnPlanet.add(rover);
+            log.info("Rover {} landed in Planet {}", rover, this);
         }
     }
 
-    public boolean isValidPointOnPlanet(Point point) {
+    public boolean isValidPointOnPlanet(Point point) throws Exception {
         return this.plateau.isValidPointOnPlateau(point);
+    }
+
+    @Override
+    public String toString() {
+        return "Planet{" +
+                "id=" + id +
+                ", planetName='" + planetName + '\'' +
+                ", roversOnPlanet=" + roversOnPlanet +
+                ", plateau=" + plateau +
+                '}';
     }
 }

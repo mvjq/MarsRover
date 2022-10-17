@@ -14,19 +14,20 @@ public enum Direction {
     static {
         N.left = W;
         N.right = E;
-        N.movePoint = new Point(0, 1);
-
-        W.left = S;
-        W.right = N;
-        W.movePoint = new Point(-1, 0);
+        N.movePoint = new Point(0, +1);
 
         S.left = W;
         S.right = E;
         S.movePoint = new Point(0, -1);
 
+
         E.left = N;
         E.right = S;
-        S.movePoint = new Point(1, 0);
+        E.movePoint = new Point(+1, 0);
+
+        W.left = S;
+        W.right = N;
+        W.movePoint = new Point(-1, 0);
     }
 
     public Direction getLeft() {

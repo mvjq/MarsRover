@@ -17,9 +17,18 @@ public class Point {
         this.y = y;
     }
 
-    public Point movePoint(Point newPoint) {
-        this.x += newPoint.x;
-        this.y += newPoint.y;
-        return this;
+    @Override
+    public String toString() {
+        return "Point{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
+
+    public Point moveNewPoint(Point newPoint) {
+        return new Point(
+                this.x + newPoint.x,
+                this.y + newPoint.y
+        );
     }
 }
